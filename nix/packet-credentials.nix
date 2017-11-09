@@ -1,4 +1,4 @@
-lib: name:
+lib:
 with lib;
 {
   authToken = mkOption {

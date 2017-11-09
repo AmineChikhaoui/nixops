@@ -1,11 +1,12 @@
 { config, lib, ...}:
 
 with lib;
+with import ./lib.nix lib;
 
 {
   options = {
-    deployment.packet = (import ./packet-credentials.nix lib "instance") // {
-      
+    deployment.packet = (import ./packet-credentials.nix lib) // {
+
       projectId = mkOption {
         type = types.str;
         description = ''
@@ -64,6 +65,23 @@ with lib;
         type = types.int;
         description = ''
           Maximum biding price for the spot instance.
+        '';
+      };
+
+      operatingSystem = mkOption {
+        default = "nixos_17_03"; #FIXME add list of Operating Systems to nix/eval-machines-info.nix to allow adding more NixOS versions
+        type = types.str;
+        description = ''
+          Version of NixOS operating system, currently only nixos_17_03 is available.
+        '';
+      };
+
+      userSSHKeys = mkOption {
+        default = [];
+        type = types.listOf (types.either types.str (resource "packet-ssh-key"));
+        apply = map (x: if builtins.isString x then x else "res-" + x._name);
+        description = ''
+          Allowed user ssh keys to be added to the root authorized keys.
         '';
       };
 

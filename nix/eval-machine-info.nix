@@ -132,6 +132,9 @@ rec {
   # hashicorp vault resources
   resources.vaultApprole = evalResources ./vault-approle.nix (zipAttrs resourcesByType.vaultApprole or []);
 
+  # Packet resources
+  resources.packetSSHKeys = evalResources ./packet-ssh-key.nix (zipAttrs resourcesByType.packetSSHKeys or []);
+
   # Azure resources
   resources.azureAvailabilitySets = evalAzureResources ./azure-availability-set.nix (zipAttrs resourcesByType.azureAvailabilitySets or []);
   resources.azureBlobContainers =
@@ -321,6 +324,7 @@ rec {
               // { disks = mapAttrs (n: v: v //
                 { baseImage = if isDerivation v.baseImage then "drv" else toString v.baseImage; }) cfg.disks; });
           libvirtd = optionalAttrs (v.config.deployment.targetEnv == "libvirtd") v.config.deployment.libvirtd;
+          packet = optionalAttrs (v.config.deployment.targetEnv == "packet") v.config.deployment.packet;
           publicIPv4 = v.config.networking.publicIPv4;
         }
       );
