@@ -26,7 +26,7 @@ with import ./lib.nix lib;
         type = types.str;
         description = ''
           The facilily in which the device will be created.
-        '';  
+        '';
       };
 
       plan = mkOption {
@@ -69,7 +69,7 @@ with import ./lib.nix lib;
       };
 
       operatingSystem = mkOption {
-        default = "nixos_17_03"; #FIXME add list of Operating Systems to nix/eval-machines-info.nix to allow adding more NixOS versions
+        default = "nixos_18_03"; #FIXME add list of Operating Systems to nix/eval-machines-info.nix to allow adding more NixOS versions
         type = types.str;
         description = ''
           Version of NixOS operating system, currently only nixos_17_03 is available.
