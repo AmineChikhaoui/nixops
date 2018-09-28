@@ -544,7 +544,8 @@ class EC2State(MachineState, nixops.resources.ec2_common.EC2CommonState):
                 isinstance(r, nixops.resources.vpc_subnet.VPCSubnetState) or
                 isinstance(r, nixops.resources.vpc_route.VPCRouteState) or
                 isinstance(r, nixops.resources.elastic_file_system.ElasticFileSystemState) or
-                isinstance(r, nixops.resources.elastic_file_system_mount_target.ElasticFileSystemMountTargetState)}
+                isinstance(r, nixops.resources.elastic_file_system_mount_target.ElasticFileSystemMountTargetState) or
+                isinstance(r, nixops.resources.random_string.RandomState)}
 
 
     def attach_volume(self, device_stored, volume_id):
@@ -1240,7 +1241,13 @@ class EC2State(MachineState, nixops.resources.ec2_common.EC2CommonState):
 
         # Auto-generate LUKS keys if the model didn't specify one.
         for device_stored, v in self.block_device_mapping.items():
-            if v.get('encrypt', False) and v.get('passphrase', "") == "" and v.get('generatedKey', "") == "" and v.get('encryptionType', "luks") == "luks":
+            passphrase = v.get('passphrase', "")
+            if v.get('encrypt', False) and passphrase.startswith("res-"):
+                res = self.depl.get_typed_resource(passphrase[4:], "random-string")
+                passphrase = res.generated_string
+                v['generatedKey'] = passphrase
+                self.update_block_device_mapping(device_stored, v)
+            if v.get('encrypt', False) and passphrase == "" and v.get('generatedKey', "") == "" and v.get('encryptionType', "luks") == "luks":
                 v['generatedKey'] = nixops.util.generate_random_string(length=256)
                 self.update_block_device_mapping(device_stored, v)
 

@@ -114,7 +114,8 @@ let
 
       passphrase = mkOption {
         default = "";
-        type = types.str;
+        type = types.either types.str (resource "random-string");
+        apply = x: if builtins.isString x then x else "res-" + x._name;
         description = ''
           The passphrase (key file) used to decrypt the key to access
           the device.  If left empty, a passphrase is generated

@@ -83,7 +83,9 @@ rec {
         { inherit pkgs uuid name resources; nodes = info.machines; }
       ).config) ["_module"]) _resources;
 
+  # Logical resources
   resources.sshKeyPairs = evalResources ./ssh-keypair.nix (zipAttrs resourcesByType.sshKeyPairs or []);
+  resources.randomStrings = evalResources ./random-string.nix (zipAttrs resourcesByType.randomStrings or []);
 
   # Amazon resources
   resources.snsTopics = evalResources ./sns-topic.nix (zipAttrs resourcesByType.snsTopics or []);
