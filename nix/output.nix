@@ -15,9 +15,14 @@ with lib;
       description = ''
         Text of a script which will produce a JSON value.
         <warning>Warning: This uses shell features and is potentially dangerous.</warning>
-        Environment variables: 
+        Environment variables:
         <envar>$out</envar> is a temp directory available for use.
         '';
+    };
+
+    executable = mkOption {
+      type = types.path;
+      description = "Generated executable that runs the script.";
     };
 
     value = mkOption {
@@ -28,5 +33,11 @@ with lib;
   };
   config = {
     _type = "output";
+    executable = pkgs.writeScriptBin "nixops-${config.name}"
+    ''
+    #!${pkgs.stdenv.shell}
+    ${config.script}
+    '';
+
   };
 }
