@@ -56,7 +56,7 @@ class PacketState(MachineState):
             instance = self.get_device()
             if instance is not None:
                 self.log_continue("[{0}]".format(instance.state))
-                if instance.state not in { "provisioning", "active" }:
+                if instance.state not in { "provisioning", "queued", "active" }:
                     raise Exception("Packet instance {0} is in an unknown state {1}".format(self.device_id, instance.state))
                 if instance.state != "active":
                     time.sleep(3)
@@ -194,7 +194,12 @@ class PacketState(MachineState):
         if not self.depl.logger.confirm("are you sure you want to destroy Packet machine {0}?".format(self.name)): return False
 
         self.log_start("destroying Packet machine... ".format(self.name))
-        device = self.get_device()
+        try:
+           device = self.get_device()
+        except Exception as e:
+            if '403' in e.message:
+                self.reset_state()
+                return
         if device is not None:
             device.delete()
 
