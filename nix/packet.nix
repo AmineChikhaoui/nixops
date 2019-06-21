@@ -69,10 +69,10 @@ with import ./lib.nix lib;
       };
 
       operatingSystem = mkOption {
-        default = "nixos_18_03"; #FIXME add list of Operating Systems to nix/eval-machines-info.nix to allow adding more NixOS versions
+        default = "nixos_19_03";
         type = types.str;
         description = ''
-          Version of NixOS operating system, currently only nixos_17_03 is available.
+          Version of NixOS operating system.
         '';
       };
 
@@ -85,9 +85,9 @@ with import ./lib.nix lib;
         '';
       };
 
-    }; 
+    };
   };
-  
+
   config = mkIf (config.deployment.targetEnv == "packet") {
     nixpkgs.system = mkOverride 900 "x86_64-linux";
   };
